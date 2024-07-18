@@ -1,0 +1,34 @@
+{
+    "Drives":  [
+                   {
+                       "FreeSpace":  219.74,
+                       "DeviceID":  "C:",
+                       "TotalSize":  255.45
+                   },
+                   {
+                       "FreeSpace":  15.44,
+                       "DeviceID":  "D:",
+                       "TotalSize":  16
+                   }
+               ],
+    "RAM":  {
+                "TotalGB":  8,
+                "UtilizationPercent":  3.9800000000000004
+            },
+    "Processor":  {
+                      "Name":  "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+                      "MACAddress":  "00:0D:3A:0F:AB:44"
+                  },
+    "Network":  {
+                    "RefreshRateHz":  "Refresh Rate:  Hz",
+                    "IPAddress":  [
+                                      "10.0.0.7",
+                                      "255.255.255.0",
+                                      "10.0.0.1"
+                                  ]
+                },
+    "OperatingSystem":  {
+                            "Version":  "10.0.22621",
+                            "Name":  "Microsoft Windows 11 Pro"
+                        }
+}

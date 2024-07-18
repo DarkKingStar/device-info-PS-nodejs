@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Information</title>
+    <style>
+        *{
+            color:antiquewhite;
+            background-color: rgb(14, 10, 10);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #340303;
+        }
+        th {
+            background-color: #000000;
+        }
+        .main-heading{
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .btn{
+            padding: 10px 20px;
+            background-color: aquamarine;
+            border: 1px solid #340303;
+            outline: none;
+            color:#340303;
+            border-radius: 8px;
+            left: 50%;
+            position: relative;
+            transform: translate(-50%,0);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-heading">System Information</h1>
+
+    <button class="btn" onclick="reloadData()">Reload</button>
+
+    <!-- Drives Section -->
+    <h2>Drives</h2>
+    <table id="drives-table">
+        <tr>
+            <th>Device ID</th>
+            <th>Total Size (GB)</th>
+            <th>Free Space (GB)</th>
+        </tr>
+    </table>
+
+    <!-- RAM Section -->
+    <h2>RAM</h2>
+    <table id="ram-table">
+        <tr>
+            <th>Total GB</th>
+            <th>Utilization Percent</th>
+        </tr>
+    </table>
+
+    <!-- Processor Section -->
+    <h2>Processor</h2>
+    <table id="processor-table">
+        <tr>
+            <th>Name</th>
+            <th>MAC Address</th>
+        </tr>
+    </table>
+
+    <!-- Network Section -->
+    <h2>Network</h2>
+    <table id="network-table">
+        <tr>
+            <th>Refresh Rate (Hz)</th>
+            <th>IP Address</th>
+        </tr>
+    </table>
+
+    <!-- Operating System Section -->
+    <h2>Operating System</h2>
+    <table id="os-table">
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+        </tr>
+    </table>
+    <script>
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+        async function updateAllTables() {
+            const data = await fetchData('http://localhost:3366/device-info');
+            if (!data || !data.Drives || !data.RAM || !data.Processor 
+            || !data.Network || !data.OperatingSystem) return;
+
+            const drivesTable = document.getElementById('drives-table');
+            drivesTable.innerHTML = `
+                <tr>
+                    <th>Device ID</th>
+                    <th>Total Size (GB)</th>
+                    <th>Free Space (GB)</th>
+                </tr>
+            `;
+
+            data.Drives.forEach(drive => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${drive.DeviceID}</td>
+                    <td>${drive.TotalSize}</td>
+                    <td>${drive.FreeSpace}</td>
+                `;
+                drivesTable.appendChild(row);
+            });
+
+            const ramTable = document.getElementById('ram-table');
+            ramTable.innerHTML = `
+                <tr>
+                    <th>Total GB</th>
+                    <th>Utilization Percent</th>
+                </tr>
+                <tr>
+                    <td>${data.RAM.TotalGB}</td>
+                    <td>${data.RAM.UtilizationPercent}</td>
+                </tr>
+            `;
+            const processorTable = document.getElementById('processor-table');
+            processorTable.innerHTML = `
+                <tr>
+                    <th>Name</th>
+                    <th>MAC Address</th>
+                </tr>
+                <tr>
+                    <td>${data.Processor.Name}</td>
+                    <td>${data.Processor.MACAddress}</td>
+                </tr>
+            `;
+            const networkTable = document.getElementById('network-table');
+            networkTable.innerHTML = `
+                <tr>
+                    <th>Refresh Rate (Hz)</th>
+                    <th>IP Address</th>
+                </tr>
+                <tr>
+                    <td>${data.Network.RefreshRateHz}</td>
+                    <td>${data.Network.IPAddress.join('<br>')}</td>
+                </tr>
+            `;
+            const osTable = document.getElementById('os-table');
+            osTable.innerHTML = `
+                <tr>
+                    <th>Name</th>
+                    <th>Version</th>
+                </tr>
+                <tr>
+                    <td>${data.OperatingSystem.Name}</td>
+                    <td>${data.OperatingSystem.Version}</td>
+                </tr>
+            `;
+        }
+        async function reloadData(){
+            const data = await fetchData('http://localhost:3366/reload');
+            updateAllTables();
+        }
+        updateAllTables();
+
+    </script>
+</body>
+</html>
